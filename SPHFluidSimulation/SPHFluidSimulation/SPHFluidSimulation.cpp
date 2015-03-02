@@ -23,7 +23,7 @@ void display()
 	glutSolidSphere(PARTICLERADIUS, 10, 10);
 	glPopMatrix();
 
-	// lala
+	
 	glutSwapBuffers();
 }
 
