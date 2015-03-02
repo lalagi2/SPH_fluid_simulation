@@ -3,7 +3,7 @@
 
 #define PARTICLERADIUS 1
 #define PARTICLERESOLUTION 7
-#define PARTICLENUMBER 200
+#define PARTICLENUMBER 300
 
 class Particle
 {

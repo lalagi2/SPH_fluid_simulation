@@ -9,6 +9,7 @@
 #include <CL/cl.h>
 
 #include "Particle.h"
+#include "Utils.h"
 
 #define DT 10
 
@@ -37,16 +38,6 @@ void display()
 	glutSwapBuffers();
 }
 
-// For discrete time simulation
-int minimum(int a, int b) 
-{
-	if (a < b) 
-	{
-		return a;
-	}
-	return b;
-}
-
 void simulate(int lastTime, int time) 
 {
 	for (int ts = lastTime; ts <= time; ts += DT) 
@@ -65,7 +56,6 @@ void idle()
 	simulate(lastTime, Time);
 
 	glutPostRedisplay();
-
 }
 
 void onInitialization() {
@@ -73,13 +63,12 @@ void onInitialization() {
 	glOrtho(0, width, 0, height, PARTICLERADIUS, -PARTICLERADIUS);
 
 	cl_float positionStep = (cl_float)width / (cl_float)PARTICLENUMBER;
-
 	cl_float xPosition = 0;
 	for (int n = 0; n < PARTICLENUMBER; n++)
 	{
 		particles[n] = new Particle();
 		particles[n]->position.s[0] = xPosition;
-		particles[n]->position.s[1] = 500;
+		particles[n]->position.s[1] = 500; // Y koordinátát beállítani
 		particles[n]->position.s[2] = 0;
 		particles[n]->position.s[3] = 0;
 
@@ -93,7 +82,7 @@ int main(int argc, char* argv[]){
 	glutInitContextFlags(GLUT_CORE_PROFILE | GLUT_DEBUG);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(width, height);
-	glutCreateWindow("GPGPU 13. labor: Incompressible fluid simulation");
+	glutCreateWindow("Smoothed-particle hydrodynamics");
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
