@@ -10,17 +10,14 @@
 #include <iostream>
 
 #include "Particle.h"
+#include "SPHSolver.h"
 #include "Utils.h"
 
 #define MAXDT 10
 
-const int width = 600;
-const int height = 600;
-
 int Time = 0;
 
-Particle* particles[PARTICLENUMBER];
-//cl_mem particles;
+//SPHSolver solver;
 
 void display()
 {
@@ -40,22 +37,6 @@ void display()
 	glutSwapBuffers();
 }
 
-void addGravity(int dt)
-{
-	for (int n = 0; n < PARTICLENUMBER; n++)
-	{
-		particles[n]->velocity.s[1] += gravity * (float)dt / 1000.0f; // Y koordinátához gravitációt hozzáadjuk
-		particles[n]->position.s[1] -= particles[n]->velocity.s[1] * (float)dt / 1000.0f;
-
-		if (particles[n]->position.s[1] <= 0.0f) // Bottom boundary condition
-		{
-			particles[n]->velocity.s[1] *= -1.0f;
-		}
-
-		// TODO: Implement all boundary condition
-	}
-}
-
 void simulate(int lastTime, int time) 
 {
 	for (int ts = lastTime; ts <= time; ts += MAXDT) 
@@ -63,7 +44,8 @@ void simulate(int lastTime, int time)
 		int te = minimum(time, ts + MAXDT);
 		int dt = te - ts;
 
-		addGravity(dt);
+		//solver.addGravity(dt);
+		//calcDensity();
 	}
 }
 
@@ -77,7 +59,8 @@ void idle()
 	glutPostRedisplay();
 }
 
-void onInitialization() {
+void onInitialization() 
+{
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(0, width, 0, height, PARTICLERADIUS, -PARTICLERADIUS);
 
@@ -100,7 +83,8 @@ void onInitialization() {
 	}
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
 	glutInit(&argc, argv);
 	glutInitContextVersion(3, 0);
 	glutInitContextFlags(GLUT_CORE_PROFILE | GLUT_DEBUG);
