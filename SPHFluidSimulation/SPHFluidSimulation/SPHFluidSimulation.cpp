@@ -7,11 +7,12 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <CL/cl.h>
+#include <iostream>
 
 #include "Particle.h"
 #include "Utils.h"
 
-#define DT 10
+#define MAXDT 10
 
 const int width = 600;
 const int height = 600;
@@ -19,6 +20,7 @@ const int height = 600;
 int Time = 0;
 
 Particle* particles[PARTICLENUMBER];
+//cl_mem particles;
 
 void display()
 {
@@ -38,13 +40,30 @@ void display()
 	glutSwapBuffers();
 }
 
+void addGravity(int dt)
+{
+	for (int n = 0; n < PARTICLENUMBER; n++)
+	{
+		particles[n]->velocity.s[1] += gravity * (float)dt / 1000.0f; // Y koordinátához gravitációt hozzáadjuk
+		particles[n]->position.s[1] -= particles[n]->velocity.s[1] * (float)dt / 1000.0f;
+
+		if (particles[n]->position.s[1] <= 0.0f) // Bottom boundary condition
+		{
+			particles[n]->velocity.s[1] *= -1.0f;
+		}
+
+		// TODO: Implement all boundary condition
+	}
+}
+
 void simulate(int lastTime, int time) 
 {
-	for (int ts = lastTime; ts <= time; ts += DT) 
+	for (int ts = lastTime; ts <= time; ts += MAXDT) 
 	{
-		int te = minimum(time, ts + DT);
+		int te = minimum(time, ts + MAXDT);
 		int dt = te - ts;
 
+		addGravity(dt);
 	}
 }
 
@@ -72,7 +91,12 @@ void onInitialization() {
 		particles[n]->position.s[2] = 0;
 		particles[n]->position.s[3] = 0;
 
-		xPosition += positionStep;
+		particles[n]->velocity.s[0] = 0;
+		particles[n]->velocity.s[1] = 0;
+		particles[n]->velocity.s[2] = 0;
+		particles[n]->velocity.s[3] = 0;
+
+		xPosition += positionStep; // részecske sorban az új részecskét arrébb toljuk positionSteppel
 	}
 }
 
